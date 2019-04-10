@@ -1,0 +1,10 @@
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\bin\Debug\SmirnoffDraw.exe.config
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\bin\Debug\SmirnoffDraw.exe
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\bin\Debug\SmirnoffDraw.pdb
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\obj\Debug\SmirnoffDraw.csprojAssemblyReference.cache
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\obj\Debug\SmirnoffDraw.Form1.resources
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\obj\Debug\SmirnoffDraw.Properties.Resources.resources
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\obj\Debug\SmirnoffDraw.csproj.GenerateResource.cache
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\obj\Debug\SmirnoffDraw.csproj.CoreCompileInputs.cache
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\obj\Debug\SmirnoffDraw.exe
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\obj\Debug\SmirnoffDraw.pdb
