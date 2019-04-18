@@ -12,19 +12,37 @@ namespace SmirnoffDraw
 {
     public partial class Form1 : Form
     {
-        Bitmap pic;
-        Bitmap pic1;
+        //public PictureBox GetPictureBox()
+        //{
+        //    return pic;
+        //}
+
+        List<Shape> shapeList = new List<Shape>();
+
+        Shape shapeCurr;
+
+        public Bitmap pic { get; set; }
+        public Bitmap pic1 { get; set; }
         string mode;
         int x1, y1;
+        int xp, yp;
+        int x2;
+        int y2;
         int x, y;
         int xclick1, yclick1;
+        public Graphics g { get; set; }
+        public Graphics g1 { get; set; }
         public Form1()
         {
             mode = "Pen";
             InitializeComponent();
             pic = new Bitmap(1000, 1000);
             pic1 = new Bitmap(1000, 1000);
+            g = Graphics.FromImage(pic);
+            g1 = Graphics.FromImage(pic1);
+
             x1 = y1 = 0;
+            xp = yp = 0;
             x = y = 0;
         }
 
@@ -82,7 +100,7 @@ namespace SmirnoffDraw
 
             if (mode == "Pen")
             {
-                g.DrawLine(p, x1, y1, e.X, e.Y);
+                g.DrawLine(p, xp, yp, e.X, e.Y);
             }
 
             if (mode == "Rectangle")
@@ -106,10 +124,20 @@ namespace SmirnoffDraw
                 g.DrawLine(p, xclick1, yclick1, e.X, e.Y);
             }
 
+            if (mode == "Romb")
+            {
+                shapeList.Add(shapeCurr);
+            }
+
             g1.DrawImage(pic, 0, 0);
                 
                 pictureBox1.Image = pic1;
 
+        }
+
+        private void button19_Click(object sender, EventArgs e)
+        {
+            mode = "Romb";
         }
 
         private void button17_Click(object sender, EventArgs e)
@@ -124,6 +152,14 @@ namespace SmirnoffDraw
             yclick1 = e.Y;
             x = e.X;
             y = e.Y;
+
+            x1 = e.X;
+            y1 = e.Y;
+
+            if (mode == "Romb")
+            {
+                shapeCurr = new Rhombus(x1, y1, 0, 0);
+            }
         }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
@@ -142,7 +178,7 @@ namespace SmirnoffDraw
             {
                 if (mode == "Pen")
                 {
-                    g.DrawLine(p, x1, y1, e.X, e.Y);
+                    g.DrawLine(p, xp, yp, e.X, e.Y);
                 }
 
                 if (mode == "Rectangle")
@@ -168,12 +204,66 @@ namespace SmirnoffDraw
                     g1.DrawLine(p, xclick1, yclick1, e.X, e.Y);
                 }
 
-                g1.DrawImage(pic, 0, 0);
+                // Это всё было без классов, теперь с классамі
+
+                x2 = e.Location.X;
+                y2 = e.Location.Y;
+
+                if (mode == "Romb")
+                {
+
+                    if (x2 < x1 && y2 > y1)
+                    {
+                        shapeCurr.x1 = x2;
+                        shapeCurr.Calculate(x2, y1, Math.Abs(x2 - x1), Math.Abs(y2 - y1));
+                    }
+                    if (x2 > x1 && y2 > y1)
+                    {
+                        //    rectCurr.x1 = x2;
+                        shapeCurr.Calculate(x1, y1, Math.Abs(x2 - x1), Math.Abs(y2 - y1));
+                    }
+                    if (x2 < x1 && y2 < y1)
+                    {
+                        shapeCurr.x1 = x2;
+                        shapeCurr.y1 = y2;
+                        shapeCurr.Calculate(x2, y2, Math.Abs(x2 - x1), Math.Abs(y2 - y1));
+                    }
+                    if (x2 > x1 && y2 < y1)
+                    {
+                        shapeCurr.y1 = y2;
+                        shapeCurr.Calculate(x1, y2, Math.Abs(x2 - x1), Math.Abs(y2 - y1));
+                    }
+
+                    shapeCurr.width = Math.Abs(x2 - x1);
+                    shapeCurr.height = Math.Abs(y2 - y1);
+
+                    DrawShapes();
+                    shapeCurr.Draw(x1, y1, 0, 0, this, p);
+                }
+
+                    g1.DrawImage(pic, 0, 0);
                 
                 pictureBox1.Image = pic1;
             }
-            x1 = e.X;
-            y1 = e.Y;
+            //x1 = e.X;
+            //y1 = e.Y;
+
+            xp = e.X;
+            yp = e.Y;
+        }
+
+        public void DrawShapes()
+        {
+            g.Clear(Color.White);
+            foreach (Shape shape in shapeList)
+            {
+                Pen p;
+                p = new Pen(button4.BackColor, trackBar1.Value);
+                p.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+                p.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+
+                shape.Draw(x1, y1, 0, 0, this, p);
+            }
         }
     }
 }
