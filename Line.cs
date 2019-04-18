@@ -8,9 +8,11 @@ using System.Drawing;
 namespace SmirnoffDraw
 {
     [Serializable]
-    class Rhombus : Shape
+    class Line : Shape
     {
-        public Rhombus(int x1, int y1, int width, int height, Color color, int penWidth)
+        public int counter = 0;
+        public List<Point> points = new List<Point>();
+        public Line(int x1, int y1, int width, int height, Color color, int penWidth)
         {
 
             this.x1 = x1;
@@ -21,23 +23,25 @@ namespace SmirnoffDraw
             this.penWidth = penWidth;
 
             Calculate(this.x1, this.y1, this.width, this.height);
+            Calculate(new Point(this.x1, this.y1), new Point(this.x1, this.y1));
         }
 
         public override void Calculate(int x1, int y1, int width, int height)
         {
             pointList.Clear();
-            pointList.Add(new float[4] { x1 + (width / 2), y1, x1 + width, y1 + (height / 2) });
-            pointList.Add(new float[4] { x1 + width, y1 + (height / 2), x1 + (width / 2), y1 + height });
-            pointList.Add(new float[4] { x1 + (width / 2), y1 + height, x1, y1 + (height / 2) });
-            pointList.Add(new float[4] { x1, y1 + (height / 2), x1 + (width / 2), y1 });
+            pointList.Add(new float[4] { x1, y1, x1 + width, y1 + height });
+        }
+
+        public override void Calculate(Point from, Point to)
+        {
+            points.Clear();
+            points.Add(from);
+            points.Add(to);
         }
 
         public override void Draw(int x1, int y1, int width, int height, Color color, int penWidth, Form1 form, Pen pen)
         {
-            foreach (float[] pointL in pointList)
-            {
-                form.g.DrawLine(pen, pointL[0], pointL[1], pointL[2], pointL[3]);
-            }
+            form.g.DrawLine(pen, points[0], points[1]);
             form.GetPictureBox().Image = form.pic;
         }
     }

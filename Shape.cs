@@ -8,24 +8,20 @@ using System.Drawing;
 
 namespace SmirnoffDraw
 {
+    [Serializable]
     class Shape
     {
         public int x1 { get; set; }
         public int y1 { get; set; }
         public int width { get; set; }
         public int height { get; set; }
+        public int penWidth { get; set; }
+        public Color color { get; set; }
         public List<float[]> pointList = new List<float[]>();
 
-        public Shape(int x1, int y1, int width, int height)
-        {
-            this.x1 = x1;
-            this.y1 = y1;
-            this.width = width;
-            this.height = height;
-        }
-
         public virtual void Calculate(int x1, int y1, int width, int height) { }
+        public virtual void Calculate(Point from, Point to) { }
 
-        public virtual void Draw(int x1, int y1, int width, int height, Form1 form, Pen pen) { }
+        public virtual void Draw(int x1, int y1, int width, int height, Color color, int penWidth, Form1 form, Pen pen) { }
     }
 }
