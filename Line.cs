@@ -46,10 +46,5 @@ namespace SmirnoffDraw
             form.g.DrawLine(pen, points[0], points[1]);
             form.GetPictureBox().Image = form.pic;
         }
-
-        public override Shape FactoryMethod(int x1, int y1, int width, int height, int color, int penWidth)
-        {
-            return new Line(x1, y1, width, height, color, penWidth);
-        }
     }
 }

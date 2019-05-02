@@ -32,8 +32,7 @@ namespace SmirnoffDraw
             return pictureBox1;
         }
 
-        public Bitmap pic { get; set; }
-        public Bitmap pic1 { get; set; }
+        public Bitmap pic { get; set; }        
         string mode;
         int x1, y1;
         int xp, yp;
@@ -43,17 +42,24 @@ namespace SmirnoffDraw
         Pen checkedPen;
         bool shiftDown = (Control.ModifierKeys & Keys.Shift) == Keys.Shift;
         public Graphics g { get; set; }
-        public Graphics g1 { get; set; }
+        
         Pen p;
+
+        LineCreator LineC = new LineCreator();
+        RectCreator RectC = new RectCreator();
+        ElpCreator ElpC = new ElpCreator();
+        RhoCreator RhoC = new RhoCreator();
+        StarCreator StarC = new StarCreator();
+        TriCreator TriC = new TriCreator();
+        OctaCreator OctaC = new OctaCreator();
+        PenCreator PenC = new PenCreator();
         public Form1()
         {
             InitializeComponent();
             this.KeyPreview = true;
             mode = "Pen";
-            pic = new Bitmap(pictureBox1.Width, pictureBox1.Height);
-            pic1 = new Bitmap(1000, 1000);
-            g = Graphics.FromImage(pic);
-            g1 = Graphics.FromImage(pic1);
+            pic = new Bitmap(pictureBox1.Width, pictureBox1.Height);            
+            g = Graphics.FromImage(pic);            
 
             checkedPen = new Pen(Color.Red, 1);
             checkedRectangle = new Rectangle();
@@ -79,7 +85,7 @@ namespace SmirnoffDraw
             shapeCurr = new Pencil();
             typeList.Add(shapeCurr.GetType());
 
-            arrList = typeList.ToArray<Type>();
+            arrList = typeList.ToArray<Type>();            
 
             x1 = y1 = 0;
             xp = yp = 0;
@@ -164,6 +170,18 @@ namespace SmirnoffDraw
                 shapeCurr.Color = currColor;
                 shapeCurr.PenWidth = currPenWidth;
 
+                if (cbShift.Checked)  //это надо для выделения, если не будет ифа, проблемы выделения с Shift
+                {
+                    if (shapeCurr.Width > shapeCurr.Height)
+                    {
+                        shapeCurr.Width = shapeCurr.Height;
+                    }
+                    else
+                    {
+                        shapeCurr.Height = shapeCurr.Width;
+                    }
+                }
+
                 DrawShapes();
                 shapeCurr.Draw(this, p);
 
@@ -240,35 +258,35 @@ namespace SmirnoffDraw
 
             if (mode == "Romb")
             {
-                shapeCurr = new Rhombus(x1, y1, 0, 0, currColor, currPenWidth);
+                shapeCurr = RhoC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
             }
             else if (mode == "Rectangle")
             {
-                shapeCurr = new Rect(x1, y1, 0, 0, currColor, currPenWidth);
+                shapeCurr = RectC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
             }
             else if (mode == "Ellipse")
             {
-                shapeCurr = new Ellipse(x1, y1, 0, 0, currColor, currPenWidth);
+                shapeCurr = ElpC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
             }
             else if (mode == "Line")
             {
-                shapeCurr = new Line(x1, y1, 0, 0, currColor, currPenWidth);
+                shapeCurr = LineC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
             }
             else if (mode == "Pen")
             {
-                shapeCurr = new Pencil(x1, y1, 0, 0, currColor, currPenWidth);
+                shapeCurr = PenC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
             }
             else if (mode == "Triangle")
             {
-                shapeCurr = new Triangle(x1, y1, 0, 0, currColor, currPenWidth);
+                shapeCurr = TriC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
             }
             else if (mode == "Star")
             {
-                shapeCurr = new Star(x1, y1, 0, 0, currColor, currPenWidth);
+                shapeCurr = StarC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
             }
             else if (mode == "Octavian")
             {
-                shapeCurr = new Octavian(x1, y1, 0, 0, currColor, currPenWidth);
+                shapeCurr = OctaC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
             }
 
         }
@@ -277,37 +295,41 @@ namespace SmirnoffDraw
         {
             checkedShape = (Shape)lbFigures.SelectedItem;
 
-            checkedRectangle.X = checkedShape.X1;
-            checkedRectangle.Y = checkedShape.Y1;
-            checkedRectangle.Width = checkedShape.Width;
-            checkedRectangle.Height = checkedShape.Height;
             DrawShapes();
-            g.DrawRectangle(checkedPen, checkedRectangle);
+
+
+            if (checkedShape == null)
+            {
+                MessageBox.Show("Figure was not selected");
+            }
+            else
+            {
+                SelectedShape.SetSel(checkedShape.X1, checkedShape.Y1, checkedShape.X1 + checkedShape.Width,
+              checkedShape.Y1 + checkedShape.Height, checkedPen);
+                g.DrawRectangle(checkedPen, SelectedShape.GetX(), SelectedShape.GetY(), SelectedShape.GetW(), SelectedShape.GetH());
+
+
+
+                tbX.Clear();
+                tbY.Clear();
+                tbH.Clear();
+                tbW.Clear();
+                tbPenWidth.Clear();
+
+                tbX.AppendText(checkedShape.X1.ToString());
+                tbY.AppendText(checkedShape.Y1.ToString());
+                tbW.AppendText(checkedShape.Width.ToString());
+                tbH.AppendText(checkedShape.Height.ToString());
+                tbColor.BackColor = Color.FromArgb(checkedShape.Color);
+                tbPenWidth.AppendText(checkedShape.PenWidth.ToString());
+            }
+
             GetPictureBox().Image = pic;
 
-            tbX.Clear();
-            tbY.Clear();
-            tbH.Clear();
-            tbW.Clear();
-            // tbColor.Clear();
-            tbPenWidth.Clear();
-
-            tbX.AppendText(checkedShape.X1.ToString());
-            tbY.AppendText(checkedShape.Y1.ToString());
-            tbW.AppendText(checkedShape.Width.ToString());
-            tbH.AppendText(checkedShape.Height.ToString());
-            tbColor.BackColor = Color.FromArgb(checkedShape.Color);
-            // tbColor.AppendText(checkedShape.Color.ToString());
-            tbPenWidth.AppendText(checkedShape.PenWidth.ToString());
         }
 
         private void btnChange_Click(object sender, EventArgs e)
         {
-            checkedRectangle.X = Convert.ToInt32(tbX.Text);
-            checkedRectangle.Y = Convert.ToInt32(tbY.Text);
-            checkedRectangle.Width = Convert.ToInt32(tbW.Text);
-            checkedRectangle.Height = Convert.ToInt32(tbH.Text);
-
             shapeList[lbFigures.SelectedIndex].X1 = Convert.ToInt32(tbX.Text);
             shapeList[lbFigures.SelectedIndex].Y1 = Convert.ToInt32(tbY.Text);
             shapeList[lbFigures.SelectedIndex].Width = Convert.ToInt32(tbW.Text);
@@ -316,7 +338,10 @@ namespace SmirnoffDraw
             shapeList[lbFigures.SelectedIndex].PenWidth = Convert.ToInt32(tbPenWidth.Text);
             shapeList[lbFigures.SelectedIndex].Calculate(shapeList[lbFigures.SelectedIndex].X1, shapeList[lbFigures.SelectedIndex].Y1, shapeList[lbFigures.SelectedIndex].Width, shapeList[lbFigures.SelectedIndex].Height);
             DrawShapes();
-            g.DrawRectangle(checkedPen, checkedRectangle);
+
+            SelectedShape.SetSel(checkedShape.X1, checkedShape.Y1, checkedShape.X1 + checkedShape.Width,
+              checkedShape.Y1 + checkedShape.Height, checkedPen);
+            g.DrawRectangle(checkedPen, SelectedShape.GetX(), SelectedShape.GetY(), SelectedShape.GetW(), SelectedShape.GetH());
             GetPictureBox().Image = pic;
         }
 

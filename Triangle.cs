@@ -39,10 +39,5 @@ namespace SmirnoffDraw
             }
             form.GetPictureBox().Image = form.pic;
         }
-
-        public override Shape FactoryMethod(int x1, int y1, int width, int height, int color, int penWidth)
-        {
-            return new Triangle(x1, y1, width, height, color, penWidth);
-        }
     }
 }

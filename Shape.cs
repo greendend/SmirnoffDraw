@@ -32,7 +32,6 @@ namespace SmirnoffDraw
         public virtual void Calculate(int x1, int y1, int width, int height) { }
         public virtual void Calculate(Point from, Point to) { }
 
-        public virtual void Draw(Form1 form, Pen pen) { }
-        public abstract Shape FactoryMethod(int x1, int y1, int width, int height, int color, int penWidth);
+        public virtual void Draw(Form1 form, Pen pen) { }       
     }
 }
