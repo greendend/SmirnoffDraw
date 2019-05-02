@@ -8,20 +8,20 @@ using System.Drawing;
 namespace SmirnoffDraw
 {
     [Serializable]
-    class Rhombus : Shape
+    public class Rhombus : Shape
     {
-        public Rhombus(int x1, int y1, int width, int height, Color color, int penWidth)
+        public Rhombus(int x1, int y1, int width, int height, int color, int penWidth)
         {
-
-            this.x1 = x1;
-            this.y1 = y1;
-            this.width = width;
-            this.height = height;
-            this.color = color;
-            this.penWidth = penWidth;
-
-            Calculate(this.x1, this.y1, this.width, this.height);
+            X1 = x1;
+            Y1 = y1;
+            Width = width;
+            Height = height;
+            Color = color;
+            PenWidth = penWidth;
+            Calculate(X1, Y1, Width, Height);
         }
+
+        public Rhombus() { }
 
         public override void Calculate(int x1, int y1, int width, int height)
         {
@@ -32,13 +32,18 @@ namespace SmirnoffDraw
             pointList.Add(new float[4] { x1, y1 + (height / 2), x1 + (width / 2), y1 });
         }
 
-        public override void Draw(int x1, int y1, int width, int height, Color color, int penWidth, Form1 form, Pen pen)
+        public override void Draw(Form1 form, Pen pen)
         {
             foreach (float[] pointL in pointList)
             {
                 form.g.DrawLine(pen, pointL[0], pointL[1], pointL[2], pointL[3]);
             }
             form.GetPictureBox().Image = form.pic;
+        }
+
+        public override Shape FactoryMethod(int x1, int y1, int width, int height, int color, int penWidth)
+        {
+            return new Rhombus(x1, y1, width, height, color, penWidth);
         }
     }
 }

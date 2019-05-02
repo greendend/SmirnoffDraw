@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using System.Runtime.Serialization.Json;
+using System.Runtime.Serialization;
 
 namespace SmirnoffDraw
 {
@@ -14,10 +17,15 @@ namespace SmirnoffDraw
     {
         List<Shape> shapeList = new List<Shape>();
         List<Shape> shapeListBuf = new List<Shape>();
+        List<Type> typeList = new List<Type>();
+        Type[] arrList;
 
         Shape shapeCurr;
-        Color currColor = Color.Red;
+        int currColor = Color.Red.ToArgb();
         int currPenWidth = 1;
+
+        Rectangle checkedRectangle;
+        Shape checkedShape;        
 
         public PictureBox GetPictureBox()
         {
@@ -32,6 +40,7 @@ namespace SmirnoffDraw
         int x2;
         int y2;
         int x, y;
+        Pen checkedPen;
         bool shiftDown = (Control.ModifierKeys & Keys.Shift) == Keys.Shift;
         public Graphics g { get; set; }
         public Graphics g1 { get; set; }
@@ -41,18 +50,42 @@ namespace SmirnoffDraw
             InitializeComponent();
             this.KeyPreview = true;
             mode = "Pen";
-            pic = new Bitmap(1000, 1000);
+            pic = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             pic1 = new Bitmap(1000, 1000);
             g = Graphics.FromImage(pic);
             g1 = Graphics.FromImage(pic1);
+
+            checkedPen = new Pen(Color.Red, 1);
+            checkedRectangle = new Rectangle();
 
             p = new Pen(Color.Red);
             p.StartCap = System.Drawing.Drawing2D.LineCap.Round;
             p.EndCap = System.Drawing.Drawing2D.LineCap.Round;
 
+            shapeCurr = new Rect();
+            typeList.Add(shapeCurr.GetType());
+            shapeCurr = new Octavian();
+            typeList.Add(shapeCurr.GetType());
+            shapeCurr = new Rhombus();
+            typeList.Add(shapeCurr.GetType());
+            shapeCurr = new Star();
+            typeList.Add(shapeCurr.GetType());
+            shapeCurr = new Ellipse();
+            typeList.Add(shapeCurr.GetType());
+            shapeCurr = new Triangle();
+            typeList.Add(shapeCurr.GetType());
+            shapeCurr = new Line();
+            typeList.Add(shapeCurr.GetType());
+            shapeCurr = new Pencil();
+            typeList.Add(shapeCurr.GetType());
+
+            arrList = typeList.ToArray<Type>();
+
             x1 = y1 = 0;
             xp = yp = 0;
             x = y = 0;
+
+            RefreshFigureList();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -63,19 +96,33 @@ namespace SmirnoffDraw
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveFileDialog1.ShowDialog();
-            if (saveFileDialog1.FileName != "")
-                pic.Save(saveFileDialog1.FileName);
+            if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+            string filename = saveFileDialog1.FileName + ".json";
+
+            Type type = shapeList.GetType();
+            DataContractJsonSerializer jsonFormatter = new DataContractJsonSerializer(typeof(List<Shape>), arrList);
+            using (FileStream fs = new FileStream(filename, FileMode.Create))
+            {
+                jsonFormatter.WriteObject(fs, shapeList);
+            }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openFileDialog1.ShowDialog();
-            if (openFileDialog1.FileName != "")
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+            string filename = openFileDialog1.FileName;
+
+            Type type = shapeList.GetType();
+            DataContractJsonSerializer jsonFormatter = new DataContractJsonSerializer(typeof(List<Shape>), arrList);
+            using (FileStream fs = new FileStream(filename, FileMode.OpenOrCreate))
             {
-                pic = (Bitmap)Image.FromFile(openFileDialog1.FileName);
-                pictureBox1.Image = pic;
-            }    
+                shapeList.Clear();
+                shapeList = (List<Shape>)jsonFormatter.ReadObject(fs);
+            }
+            DrawShapes();
+            RefreshFigureList();
         }
 
         private void button14_Click(object sender, EventArgs e)
@@ -104,23 +151,24 @@ namespace SmirnoffDraw
             {
                 if (x2 < x1)
                 {
-                    shapeCurr.x1 = x2;
+                    shapeCurr.X1 = x2;
                 }
 
                 if (y2 < y1)
                 {
-                    shapeCurr.y1 = y2;
+                    shapeCurr.Y1 = y2;
                 }
 
-                shapeCurr.width = Math.Abs(x2 - x1);
-                shapeCurr.height = Math.Abs(y2 - y1);
-                shapeCurr.color = currColor;
-                shapeCurr.penWidth = currPenWidth;
+                shapeCurr.Width = Math.Abs(x2 - x1);
+                shapeCurr.Height = Math.Abs(y2 - y1);
+                shapeCurr.Color = currColor;
+                shapeCurr.PenWidth = currPenWidth;
 
                 DrawShapes();
-                shapeCurr.Draw(x1, y1, shapeCurr.width, shapeCurr.height, currColor, currPenWidth, this, p);
+                shapeCurr.Draw(this, p);
 
-                shapeList.Add(shapeCurr);
+                shapeList.Add(shapeCurr);               
+                RefreshFigureList();
             }
 
         }
@@ -128,22 +176,8 @@ namespace SmirnoffDraw
         private void button19_Click(object sender, EventArgs e)
         {
             mode = "Romb";
+            button18.Image = Properties.Resources.rhombus64;
         }
-
-        //private void Form1_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.KeyCode == Keys.Shift)
-        //    {
-        //        if (shapeCurr.width > shapeCurr.height)
-        //        {
-        //            shapeCurr.width = shapeCurr.height;
-        //        }
-        //        else
-        //        {
-        //            shapeCurr.height = shapeCurr.width;
-        //        }
-        //    }
-        //}
 
         private void button17_Click(object sender, EventArgs e)
         {
@@ -154,17 +188,50 @@ namespace SmirnoffDraw
         private void button20_Click(object sender, EventArgs e)
         {
             mode = "Triangle";
+            button18.Image = Properties.Resources.triangle64;
         }
 
         private void button21_Click(object sender, EventArgs e)
         {
             mode = "Star";
+            button18.Image = Properties.Resources.star64;
+        }
+
+        private void button22_Click(object sender, EventArgs e)
+        {
+            mode = "Octavian";
+            button18.Image = Properties.Resources.octagon64;
+        }
+
+        private void buttonUNDO_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                shapeListBuf.Add(shapeList[shapeList.Count - 1]);
+                shapeList.RemoveAt(shapeList.Count - 1);
+                DrawShapes();
+                RefreshFigureList();
+            }
+            catch { MessageBox.Show("Отмена невозможна"); }
+        }
+
+        private void buttonRETURN_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                shapeList.Add(shapeListBuf[shapeListBuf.Count - 1]);
+                shapeListBuf.RemoveAt(shapeListBuf.Count - 1);
+                DrawShapes();
+                RefreshFigureList();
+            }
+            catch { MessageBox.Show("Восстановление невозможно"); }
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-            currColor = button4.BackColor;
-            p.Color = currColor;
+            shapeListBuf.Clear();
+            currColor = button4.BackColor.ToArgb();
+            p.Color = Color.FromArgb(currColor);
             p.Width = trackBar1.Value;
             currPenWidth = trackBar1.Value;
 
@@ -199,7 +266,68 @@ namespace SmirnoffDraw
             {
                 shapeCurr = new Star(x1, y1, 0, 0, currColor, currPenWidth);
             }
+            else if (mode == "Octavian")
+            {
+                shapeCurr = new Octavian(x1, y1, 0, 0, currColor, currPenWidth);
+            }
 
+        }
+
+        private void lbFigures_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            checkedShape = (Shape)lbFigures.SelectedItem;
+
+            checkedRectangle.X = checkedShape.X1;
+            checkedRectangle.Y = checkedShape.Y1;
+            checkedRectangle.Width = checkedShape.Width;
+            checkedRectangle.Height = checkedShape.Height;
+            DrawShapes();
+            g.DrawRectangle(checkedPen, checkedRectangle);
+            GetPictureBox().Image = pic;
+
+            tbX.Clear();
+            tbY.Clear();
+            tbH.Clear();
+            tbW.Clear();
+            // tbColor.Clear();
+            tbPenWidth.Clear();
+
+            tbX.AppendText(checkedShape.X1.ToString());
+            tbY.AppendText(checkedShape.Y1.ToString());
+            tbW.AppendText(checkedShape.Width.ToString());
+            tbH.AppendText(checkedShape.Height.ToString());
+            tbColor.BackColor = Color.FromArgb(checkedShape.Color);
+            // tbColor.AppendText(checkedShape.Color.ToString());
+            tbPenWidth.AppendText(checkedShape.PenWidth.ToString());
+        }
+
+        private void btnChange_Click(object sender, EventArgs e)
+        {
+            checkedRectangle.X = Convert.ToInt32(tbX.Text);
+            checkedRectangle.Y = Convert.ToInt32(tbY.Text);
+            checkedRectangle.Width = Convert.ToInt32(tbW.Text);
+            checkedRectangle.Height = Convert.ToInt32(tbH.Text);
+
+            shapeList[lbFigures.SelectedIndex].X1 = Convert.ToInt32(tbX.Text);
+            shapeList[lbFigures.SelectedIndex].Y1 = Convert.ToInt32(tbY.Text);
+            shapeList[lbFigures.SelectedIndex].Width = Convert.ToInt32(tbW.Text);
+            shapeList[lbFigures.SelectedIndex].Height = Convert.ToInt32(tbH.Text);
+            shapeList[lbFigures.SelectedIndex].Color = tbColor.BackColor.ToArgb();
+            shapeList[lbFigures.SelectedIndex].PenWidth = Convert.ToInt32(tbPenWidth.Text);
+            shapeList[lbFigures.SelectedIndex].Calculate(shapeList[lbFigures.SelectedIndex].X1, shapeList[lbFigures.SelectedIndex].Y1, shapeList[lbFigures.SelectedIndex].Width, shapeList[lbFigures.SelectedIndex].Height);
+            DrawShapes();
+            g.DrawRectangle(checkedPen, checkedRectangle);
+            GetPictureBox().Image = pic;
+        }
+
+        private void tbColor_Click(object sender, EventArgs e)
+        {
+            ColorDialog MyDialog = new ColorDialog();
+            MyDialog.AllowFullOpen = true;
+            MyDialog.ShowHelp = true;
+            if (MyDialog.ShowDialog() == DialogResult.OK)
+                tbColor.BackColor = MyDialog.Color;
+            checkedShape.Color = MyDialog.Color.ToArgb();
         }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
@@ -210,46 +338,55 @@ namespace SmirnoffDraw
                 x2 = e.Location.X;
                 y2 = e.Location.Y;
                 
-                shapeCurr.width = Math.Abs(x2 - x1);
-                shapeCurr.height = Math.Abs(y2 - y1);
+                shapeCurr.Width = Math.Abs(x2 - x1);
+                shapeCurr.Height = Math.Abs(y2 - y1);
                 shapeCurr.Calculate(new Point(x1, y1), e.Location);
 
                 if (cbShift.Checked)
                 {
-                    if (shapeCurr.width > shapeCurr.height)
+                    if (shapeCurr.Width > shapeCurr.Height)
                     {
-                        shapeCurr.width = shapeCurr.height;
+                        shapeCurr.Width = shapeCurr.Height;
                     }
                     else
                     {
-                        shapeCurr.height = shapeCurr.width;
+                        shapeCurr.Height = shapeCurr.Width;
                     }
                 }
 
 
                 if (x2 < x1 && y2 > y1)
                 {
-                    shapeCurr.x1 = x2;
-                    shapeCurr.Calculate(x2, y1, shapeCurr.width, shapeCurr.height);
+                    shapeCurr.X1 = x2;
+                    shapeCurr.Calculate(x2, y1, shapeCurr.Width, shapeCurr.Height);
                 }
                 if (x2 > x1 && y2 > y1)
                 {
-                    shapeCurr.Calculate(x1, y1, shapeCurr.width, shapeCurr.height);
+                    shapeCurr.Calculate(x1, y1, shapeCurr.Width, shapeCurr.Height);
                 }
                 if (x2 < x1 && y2 < y1)
                 {
-                    shapeCurr.x1 = x2;
-                    shapeCurr.y1 = y2;
-                    shapeCurr.Calculate(x2, y2, shapeCurr.width, shapeCurr.height);
+                    shapeCurr.X1 = x2;
+                    shapeCurr.Y1 = y2;
+                    shapeCurr.Calculate(x2, y2, shapeCurr.Width, shapeCurr.Height);
                 }
                 if (x2 > x1 && y2 < y1)
                 {
-                    shapeCurr.y1 = y2;
-                    shapeCurr.Calculate(x1, y2, shapeCurr.width, shapeCurr.height);
+                    shapeCurr.Y1 = y2;
+                    shapeCurr.Calculate(x1, y2, shapeCurr.Width, shapeCurr.Height);
                 }
                 
                 DrawShapes();
-                shapeCurr.Draw(x1, y1, shapeCurr.width, shapeCurr.height, currColor, currPenWidth, this, p);               
+                shapeCurr.Draw(this, p);               
+            }
+        }
+
+        private void RefreshFigureList()
+        {
+            lbFigures.Items.Clear();
+            foreach (Shape shape in shapeList)
+            {
+                lbFigures.Items.Add(shape);
             }
         }
 
@@ -258,12 +395,12 @@ namespace SmirnoffDraw
             g.Clear(Color.White);
             foreach (Shape shape in shapeList)
             {
-                p.Color = shape.color;
-                p.Width = shape.penWidth;
-                shape.Draw(x1, y1, shape.width, shape.height, shape.color, shape.penWidth, this, p);
+                p.Color = Color.FromArgb(shape.Color);
+                p.Width = shape.PenWidth;
+                shape.Draw(this, p);
             }
             p.Width = currPenWidth;
-            p.Color = currColor;
+            p.Color = Color.FromArgb(currColor);
             GetPictureBox().Image = pic;
         }
     }

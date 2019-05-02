@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,6 +55,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Line.cs" />
+    <Compile Include="Octavian.cs" />
     <Compile Include="Pencil.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -117,6 +119,36 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\rectangle70x70.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rhombus28.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\triangle28.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\star28.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\octagon28.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\octagon64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rhombus64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\star64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\triangle64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\return28.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\next28.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -8,11 +8,10 @@ using System.Drawing;
 namespace SmirnoffDraw
 {
     [Serializable]
-    public class Star : Shape
+    public class Octavian : Shape
     {
         public List<Point> points = new List<Point>();
-
-        public Star(int x1, int y1, int width, int height, int color, int penWidth)
+        public Octavian(int x1, int y1, int width, int height, int color, int penWidth)
         {
             X1 = x1;
             Y1 = y1;
@@ -23,28 +22,19 @@ namespace SmirnoffDraw
             Calculate(X1, Y1, Width, Height);
         }
 
-        public Star() { }
+        public Octavian() { }
 
         public override void Calculate(int x1, int y1, int width, int height)
         {
-            points.Clear();
-
             Point center = new Point(x1 + width / 2, y1 + height / 2);
-            const int angleCount = 6;
-            const int angle = 360 / angleCount;
-
-            for (int i = 0; i <= 360; i += angle)
+            pointList.Clear();
+            points.Clear();
+            for (int i = 0; i <= 360; i += 360 / 8)
             {
                 double psi = (((i - 90) % 360) * 3.14159f / 180.0f);
                 double fi = Math.Atan2(width * Math.Sin(psi), height * Math.Cos(psi));
                 float x = (float)((width / 2 * Math.Cos(fi)) + center.X);
                 float y = (float)(height / 2 * Math.Sin(fi) + center.Y);
-                points.Add(new Point(Convert.ToInt32(x), Convert.ToInt32(y)));
-
-                psi = ((((i - 90) + angle / 2) % 360) * 3.14159f / 180.0f);
-                fi = Math.Atan2(width * Math.Sin(psi), height * Math.Cos(psi));
-                x = (float)((width / 4 * Math.Cos(fi)) + center.X);
-                y = (float)(height / 4 * Math.Sin(fi) + center.Y);
                 points.Add(new Point(Convert.ToInt32(x), Convert.ToInt32(y)));
             }
         }
@@ -61,9 +51,7 @@ namespace SmirnoffDraw
 
         public override Shape FactoryMethod(int x1, int y1, int width, int height, int color, int penWidth)
         {
-            return new Star(x1, y1, width, height, color, penWidth);
+            return new Octavian(x1, y1, width, height, color, penWidth);
         }
     }
-
-
 }

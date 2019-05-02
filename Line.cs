@@ -8,23 +8,25 @@ using System.Drawing;
 namespace SmirnoffDraw
 {
     [Serializable]
-    class Line : Shape
+    public class Line : Shape
     {
         public int counter = 0;
         public List<Point> points = new List<Point>();
-        public Line(int x1, int y1, int width, int height, Color color, int penWidth)
+        public Line(int x1, int y1, int width, int height, int color, int penWidth)
         {
 
-            this.x1 = x1;
-            this.y1 = y1;
-            this.width = width;
-            this.height = height;
-            this.color = color;
-            this.penWidth = penWidth;
+            X1 = x1;
+            Y1 = y1;
+            Width = width;
+            Height = height;
+            Color = color;
+            PenWidth = penWidth;
 
-            Calculate(this.x1, this.y1, this.width, this.height);
-            Calculate(new Point(this.x1, this.y1), new Point(this.x1, this.y1));
+            Calculate(X1, Y1, Width, Height);
+            Calculate(new Point(X1, Y1), new Point(X1, Y1));
         }
+
+        public Line() { }
 
         public override void Calculate(int x1, int y1, int width, int height)
         {
@@ -39,10 +41,15 @@ namespace SmirnoffDraw
             points.Add(to);
         }
 
-        public override void Draw(int x1, int y1, int width, int height, Color color, int penWidth, Form1 form, Pen pen)
+        public override void Draw(Form1 form, Pen pen)
         {
             form.g.DrawLine(pen, points[0], points[1]);
             form.GetPictureBox().Image = form.pic;
+        }
+
+        public override Shape FactoryMethod(int x1, int y1, int width, int height, int color, int penWidth)
+        {
+            return new Line(x1, y1, width, height, color, penWidth);
         }
     }
 }

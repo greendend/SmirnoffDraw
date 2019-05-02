@@ -5,23 +5,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Runtime.Serialization.Json;
+using System.Runtime.Serialization;
 
 namespace SmirnoffDraw
 {
     [Serializable]
-    class Shape
+    [DataContract]
+    public abstract class Shape
     {
-        public int x1 { get; set; }
-        public int y1 { get; set; }
-        public int width { get; set; }
-        public int height { get; set; }
-        public int penWidth { get; set; }
-        public Color color { get; set; }
+        [DataMember]
+        public int X1 { get; set; }
+        [DataMember]
+        public int Y1 { get; set; }
+        [DataMember]
+        public int Width { get; set; }
+        [DataMember]
+        public int Height { get; set; }
+        [DataMember]
+        public int PenWidth { get; set; }
+        [DataMember]
+        public int Color { get; set; }
+        [DataMember]
         public List<float[]> pointList = new List<float[]>();
 
         public virtual void Calculate(int x1, int y1, int width, int height) { }
         public virtual void Calculate(Point from, Point to) { }
 
-        public virtual void Draw(int x1, int y1, int width, int height, Color color, int penWidth, Form1 form, Pen pen) { }
+        public virtual void Draw(Form1 form, Pen pen) { }
+        public abstract Shape FactoryMethod(int x1, int y1, int width, int height, int color, int penWidth);
     }
 }
