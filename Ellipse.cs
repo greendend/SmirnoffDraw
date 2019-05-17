@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SmirnoffDraw
 {
     [Serializable]
-    public class Ellipse : Shape
+    public class Ellipse : Shape, ISelectable, IEditable
     {
         public List<Point> points = new List<Point>();
 

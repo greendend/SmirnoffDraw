@@ -8,7 +8,7 @@ using System.Drawing;
 namespace SmirnoffDraw
 {
     [Serializable]
-    public class Star : Shape
+    public class Star : Shape, ISelectable, IEditable
     {
         public List<Point> points = new List<Point>();
 

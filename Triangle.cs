@@ -8,7 +8,7 @@ using System.Drawing;
 namespace SmirnoffDraw
 {
     [Serializable]
-    public class Triangle : Shape
+    public class Triangle : Shape, ISelectable, IEditable
     {
         public Triangle(int x1, int y1, int width, int height, int color, int penWidth)
         {

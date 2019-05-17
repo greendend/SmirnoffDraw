@@ -8,7 +8,7 @@ using System.Drawing;
 namespace SmirnoffDraw
 {
     [Serializable]
-    public class Rhombus : Shape
+    public class Rhombus : Shape, ISelectable, IEditable
     {
         public Rhombus(int x1, int y1, int width, int height, int color, int penWidth)
         {

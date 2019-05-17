@@ -8,7 +8,7 @@ using System.Drawing;
 namespace SmirnoffDraw
 {
     [Serializable]
-    public class Rect : Shape
+    public class Rect : Shape, ISelectable, IEditable
     {
         public Rect(int x1, int y1, int width, int height, int color, int penWidth)
         {

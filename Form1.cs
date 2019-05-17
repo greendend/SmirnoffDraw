@@ -110,8 +110,8 @@ namespace SmirnoffDraw
             DataContractJsonSerializer jsonFormatter = new DataContractJsonSerializer(typeof(List<Shape>), arrList);
             using (FileStream fs = new FileStream(filename, FileMode.Create))
             {
-                jsonFormatter.WriteObject(fs, shapeList);
-            }
+                    jsonFormatter.WriteObject(fs, shapeList);
+            }            
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -119,14 +119,64 @@ namespace SmirnoffDraw
             if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
                 return;
             string filename = openFileDialog1.FileName;
-
-            Type type = shapeList.GetType();
+            string textFromFile;
+            //Type type = shapeList.GetType();          
             DataContractJsonSerializer jsonFormatter = new DataContractJsonSerializer(typeof(List<Shape>), arrList);
             using (FileStream fs = new FileStream(filename, FileMode.OpenOrCreate))
             {
-                shapeList.Clear();
-                shapeList = (List<Shape>)jsonFormatter.ReadObject(fs);
+                // преобразуем строку в байты
+                byte[] array = new byte[fs.Length];
+                // считываем данные
+                fs.Read(array, 0, array.Length);
+                // декодируем байты в строку
+                textFromFile = Encoding.Default.GetString(array);
+                //ShapeList.Clear();
+                //ShapeList = (List<Shape>)jsonFormatter.ReadObject(fs);       
+            }               
+
+            textFromFile.Remove(0, 1);
+
+            while (textFromFile.Length > 0)
+            {
+
+                int startIndex = textFromFile.IndexOf("{\"__type\"");                
+                textFromFile = textFromFile.Remove(0, 9 + startIndex);
+                int endIndex;
+
+                endIndex = textFromFile.IndexOf("{\"__type\"");                    
+                    if (endIndex == -1)
+                    {
+                        endIndex = textFromFile.IndexOf("]]}]");
+                        endIndex += 3;                        
+                    } else
+                        endIndex -= 2;
+                
+                //MessageBox.Show(textFromFile + "\n" + Convert.ToString(startIndex) + "    " + Convert.ToString(endIndex) + "\n");
+                
+                string bufstr = "{\"__type\":" + textFromFile.Substring(startIndex, endIndex);                
+                textFromFile = textFromFile.Remove(0, endIndex+1);
+                startIndex = 0;
+                endIndex = -1;
+
+                string bufFile = "bufFile.json";
+                File.WriteAllText(bufFile, bufstr);
+
+                Type type = shapeList.GetType();
+                try
+                {
+                    jsonFormatter = new DataContractJsonSerializer(typeof(Shape), arrList);
+                    using (FileStream fs = new FileStream(bufFile, FileMode.OpenOrCreate))
+                    {
+                        shapeList.Add((Shape)jsonFormatter.ReadObject(fs));
+                    }
+                }
+                catch
+                {
+
+                }
+                bufstr = String.Empty;
             }
+
             DrawShapes();
             RefreshFigureList();
         }
@@ -295,49 +345,56 @@ namespace SmirnoffDraw
         {
             checkedShape = (Shape)lbFigures.SelectedItem;
 
-            DrawShapes();
-
-
-            if (checkedShape == null)
+            if (checkedShape is ISelectable)
             {
-                MessageBox.Show("Figure was not selected");
+
+                DrawShapes();
+
+
+                if (checkedShape == null)
+                {
+                    MessageBox.Show("Figure was not selected");
+                }
+                else
+                {
+                    SelectedShape.SetSel(checkedShape.X1, checkedShape.Y1, checkedShape.X1 + checkedShape.Width,
+                  checkedShape.Y1 + checkedShape.Height, checkedPen);
+                    g.DrawRectangle(checkedPen, SelectedShape.GetX(), SelectedShape.GetY(), SelectedShape.GetW(), SelectedShape.GetH());
+
+
+
+                    tbX.Clear();
+                    tbY.Clear();
+                    tbH.Clear();
+                    tbW.Clear();
+                    tbPenWidth.Clear();
+
+                    tbX.AppendText(checkedShape.X1.ToString());
+                    tbY.AppendText(checkedShape.Y1.ToString());
+                    tbW.AppendText(checkedShape.Width.ToString());
+                    tbH.AppendText(checkedShape.Height.ToString());
+                    tbColor.BackColor = Color.FromArgb(checkedShape.Color);
+                    tbPenWidth.AppendText(checkedShape.PenWidth.ToString());
+                }
+
+                GetPictureBox().Image = pic;
             }
-            else
-            {
-                SelectedShape.SetSel(checkedShape.X1, checkedShape.Y1, checkedShape.X1 + checkedShape.Width,
-              checkedShape.Y1 + checkedShape.Height, checkedPen);
-                g.DrawRectangle(checkedPen, SelectedShape.GetX(), SelectedShape.GetY(), SelectedShape.GetW(), SelectedShape.GetH());
-
-
-
-                tbX.Clear();
-                tbY.Clear();
-                tbH.Clear();
-                tbW.Clear();
-                tbPenWidth.Clear();
-
-                tbX.AppendText(checkedShape.X1.ToString());
-                tbY.AppendText(checkedShape.Y1.ToString());
-                tbW.AppendText(checkedShape.Width.ToString());
-                tbH.AppendText(checkedShape.Height.ToString());
-                tbColor.BackColor = Color.FromArgb(checkedShape.Color);
-                tbPenWidth.AppendText(checkedShape.PenWidth.ToString());
-            }
-
-            GetPictureBox().Image = pic;
 
         }
 
         private void btnChange_Click(object sender, EventArgs e)
         {
-            shapeList[lbFigures.SelectedIndex].X1 = Convert.ToInt32(tbX.Text);
-            shapeList[lbFigures.SelectedIndex].Y1 = Convert.ToInt32(tbY.Text);
-            shapeList[lbFigures.SelectedIndex].Width = Convert.ToInt32(tbW.Text);
-            shapeList[lbFigures.SelectedIndex].Height = Convert.ToInt32(tbH.Text);
-            shapeList[lbFigures.SelectedIndex].Color = tbColor.BackColor.ToArgb();
-            shapeList[lbFigures.SelectedIndex].PenWidth = Convert.ToInt32(tbPenWidth.Text);
-            shapeList[lbFigures.SelectedIndex].Calculate(shapeList[lbFigures.SelectedIndex].X1, shapeList[lbFigures.SelectedIndex].Y1, shapeList[lbFigures.SelectedIndex].Width, shapeList[lbFigures.SelectedIndex].Height);
-            DrawShapes();
+            if (checkedShape is IEditable)
+            {
+                shapeList[lbFigures.SelectedIndex].X1 = Convert.ToInt32(tbX.Text);
+                shapeList[lbFigures.SelectedIndex].Y1 = Convert.ToInt32(tbY.Text);
+                shapeList[lbFigures.SelectedIndex].Width = Convert.ToInt32(tbW.Text);
+                shapeList[lbFigures.SelectedIndex].Height = Convert.ToInt32(tbH.Text);
+                shapeList[lbFigures.SelectedIndex].Color = tbColor.BackColor.ToArgb();
+                shapeList[lbFigures.SelectedIndex].PenWidth = Convert.ToInt32(tbPenWidth.Text);
+                shapeList[lbFigures.SelectedIndex].Calculate(shapeList[lbFigures.SelectedIndex].X1, shapeList[lbFigures.SelectedIndex].Y1, shapeList[lbFigures.SelectedIndex].Width, shapeList[lbFigures.SelectedIndex].Height);
+                DrawShapes();
+            }
 
             SelectedShape.SetSel(checkedShape.X1, checkedShape.Y1, checkedShape.X1 + checkedShape.Width,
               checkedShape.Y1 + checkedShape.Height, checkedPen);

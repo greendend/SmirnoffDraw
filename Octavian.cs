@@ -8,7 +8,7 @@ using System.Drawing;
 namespace SmirnoffDraw
 {
     [Serializable]
-    public class Octavian : Shape
+    public class Octavian : Shape, ISelectable, IEditable
     {
         public List<Point> points = new List<Point>();
         public Octavian(int x1, int y1, int width, int height, int color, int penWidth)
