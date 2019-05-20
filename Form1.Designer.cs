@@ -37,16 +37,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.buttonRETURN = new System.Windows.Forms.Button();
             this.buttonUNDO = new System.Windows.Forms.Button();
-            this.button22 = new System.Windows.Forms.Button();
-            this.button21 = new System.Windows.Forms.Button();
-            this.button20 = new System.Windows.Forms.Button();
             this.cbShift = new System.Windows.Forms.CheckBox();
-            this.button19 = new System.Windows.Forms.Button();
-            this.button18 = new System.Windows.Forms.Button();
-            this.button17 = new System.Windows.Forms.Button();
-            this.button16 = new System.Windows.Forms.Button();
-            this.button15 = new System.Windows.Forms.Button();
-            this.button14 = new System.Windows.Forms.Button();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.button8 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
@@ -65,6 +56,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.cmbbShapes = new System.Windows.Forms.ComboBox();
             this.tbColor = new System.Windows.Forms.Button();
             this.tbPenWidth = new System.Windows.Forms.TextBox();
             this.lblPenW = new System.Windows.Forms.Label();
@@ -116,7 +108,7 @@
             this.openToolStripMenuItem.BackColor = System.Drawing.Color.LightGreen;
             this.openToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(120, 26);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -125,7 +117,7 @@
             this.saveToolStripMenuItem.BackColor = System.Drawing.Color.LightGreen;
             this.saveToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(120, 26);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -134,7 +126,7 @@
             this.closeToolStripMenuItem.BackColor = System.Drawing.Color.LightGreen;
             this.closeToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(120, 26);
             this.closeToolStripMenuItem.Text = "Close";
             // 
             // aboutProgramToolStripMenuItem
@@ -149,16 +141,7 @@
             this.panel1.BackColor = System.Drawing.Color.SeaGreen;
             this.panel1.Controls.Add(this.buttonRETURN);
             this.panel1.Controls.Add(this.buttonUNDO);
-            this.panel1.Controls.Add(this.button22);
-            this.panel1.Controls.Add(this.button21);
-            this.panel1.Controls.Add(this.button20);
             this.panel1.Controls.Add(this.cbShift);
-            this.panel1.Controls.Add(this.button19);
-            this.panel1.Controls.Add(this.button18);
-            this.panel1.Controls.Add(this.button17);
-            this.panel1.Controls.Add(this.button16);
-            this.panel1.Controls.Add(this.button15);
-            this.panel1.Controls.Add(this.button14);
             this.panel1.Controls.Add(this.trackBar1);
             this.panel1.Controls.Add(this.button8);
             this.panel1.Controls.Add(this.button9);
@@ -204,42 +187,6 @@
             this.buttonUNDO.UseVisualStyleBackColor = false;
             this.buttonUNDO.Click += new System.EventHandler(this.buttonUNDO_Click);
             // 
-            // button22
-            // 
-            this.button22.BackColor = System.Drawing.Color.YellowGreen;
-            this.button22.Image = global::SmirnoffDraw.Properties.Resources.octagon28;
-            this.button22.Location = new System.Drawing.Point(56, 144);
-            this.button22.Margin = new System.Windows.Forms.Padding(4);
-            this.button22.Name = "button22";
-            this.button22.Size = new System.Drawing.Size(49, 46);
-            this.button22.TabIndex = 23;
-            this.button22.UseVisualStyleBackColor = false;
-            this.button22.Click += new System.EventHandler(this.button22_Click);
-            // 
-            // button21
-            // 
-            this.button21.BackColor = System.Drawing.Color.OliveDrab;
-            this.button21.Image = global::SmirnoffDraw.Properties.Resources.star28;
-            this.button21.Location = new System.Drawing.Point(5, 144);
-            this.button21.Margin = new System.Windows.Forms.Padding(4);
-            this.button21.Name = "button21";
-            this.button21.Size = new System.Drawing.Size(49, 46);
-            this.button21.TabIndex = 22;
-            this.button21.UseVisualStyleBackColor = false;
-            this.button21.Click += new System.EventHandler(this.button21_Click);
-            // 
-            // button20
-            // 
-            this.button20.BackColor = System.Drawing.Color.GreenYellow;
-            this.button20.Image = global::SmirnoffDraw.Properties.Resources.triangle28;
-            this.button20.Location = new System.Drawing.Point(56, 97);
-            this.button20.Margin = new System.Windows.Forms.Padding(4);
-            this.button20.Name = "button20";
-            this.button20.Size = new System.Drawing.Size(49, 46);
-            this.button20.TabIndex = 21;
-            this.button20.UseVisualStyleBackColor = false;
-            this.button20.Click += new System.EventHandler(this.button20_Click);
-            // 
             // cbShift
             // 
             this.cbShift.AutoSize = true;
@@ -252,77 +199,6 @@
             this.cbShift.TabIndex = 20;
             this.cbShift.Text = "Shift";
             this.cbShift.UseVisualStyleBackColor = true;
-            // 
-            // button19
-            // 
-            this.button19.BackColor = System.Drawing.Color.GreenYellow;
-            this.button19.Image = global::SmirnoffDraw.Properties.Resources.rhombus28;
-            this.button19.Location = new System.Drawing.Point(5, 97);
-            this.button19.Margin = new System.Windows.Forms.Padding(4);
-            this.button19.Name = "button19";
-            this.button19.Size = new System.Drawing.Size(49, 46);
-            this.button19.TabIndex = 19;
-            this.button19.UseVisualStyleBackColor = false;
-            this.button19.Click += new System.EventHandler(this.button19_Click);
-            // 
-            // button18
-            // 
-            this.button18.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.button18.Image = global::SmirnoffDraw.Properties.Resources.pencil70x701;
-            this.button18.Location = new System.Drawing.Point(4, 191);
-            this.button18.Margin = new System.Windows.Forms.Padding(4);
-            this.button18.Name = "button18";
-            this.button18.Size = new System.Drawing.Size(101, 94);
-            this.button18.TabIndex = 18;
-            this.button18.UseVisualStyleBackColor = false;
-            // 
-            // button17
-            // 
-            this.button17.BackColor = System.Drawing.Color.LightGreen;
-            this.button17.Image = global::SmirnoffDraw.Properties.Resources.line;
-            this.button17.Location = new System.Drawing.Point(5, 50);
-            this.button17.Margin = new System.Windows.Forms.Padding(4);
-            this.button17.Name = "button17";
-            this.button17.Size = new System.Drawing.Size(49, 46);
-            this.button17.TabIndex = 17;
-            this.button17.UseVisualStyleBackColor = false;
-            this.button17.Click += new System.EventHandler(this.button17_Click);
-            // 
-            // button16
-            // 
-            this.button16.BackColor = System.Drawing.Color.LawnGreen;
-            this.button16.Image = global::SmirnoffDraw.Properties.Resources.Ellipse;
-            this.button16.Location = new System.Drawing.Point(56, 50);
-            this.button16.Margin = new System.Windows.Forms.Padding(4);
-            this.button16.Name = "button16";
-            this.button16.Size = new System.Drawing.Size(49, 46);
-            this.button16.TabIndex = 16;
-            this.button16.UseVisualStyleBackColor = false;
-            this.button16.Click += new System.EventHandler(this.button16_Click);
-            // 
-            // button15
-            // 
-            this.button15.BackColor = System.Drawing.Color.PaleGreen;
-            this.button15.Image = global::SmirnoffDraw.Properties.Resources.rectangle;
-            this.button15.Location = new System.Drawing.Point(56, 4);
-            this.button15.Margin = new System.Windows.Forms.Padding(4);
-            this.button15.Name = "button15";
-            this.button15.Size = new System.Drawing.Size(49, 46);
-            this.button15.TabIndex = 15;
-            this.button15.UseVisualStyleBackColor = false;
-            this.button15.Click += new System.EventHandler(this.button15_Click);
-            // 
-            // button14
-            // 
-            this.button14.BackColor = System.Drawing.Color.LimeGreen;
-            this.button14.Image = global::SmirnoffDraw.Properties.Resources.pencil1;
-            this.button14.Location = new System.Drawing.Point(5, 4);
-            this.button14.Margin = new System.Windows.Forms.Padding(4);
-            this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(49, 46);
-            this.button14.TabIndex = 14;
-            this.button14.UseVisualStyleBackColor = false;
-            this.button14.Click += new System.EventHandler(this.button14_Click);
             // 
             // trackBar1
             // 
@@ -496,6 +372,7 @@
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.Color.SeaGreen;
+            this.panel2.Controls.Add(this.cmbbShapes);
             this.panel2.Controls.Add(this.tbColor);
             this.panel2.Controls.Add(this.tbPenWidth);
             this.panel2.Controls.Add(this.lblPenW);
@@ -515,6 +392,14 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(267, 660);
             this.panel2.TabIndex = 3;
+            // 
+            // cmbbShapes
+            // 
+            this.cmbbShapes.FormattingEnabled = true;
+            this.cmbbShapes.Location = new System.Drawing.Point(9, 510);
+            this.cmbbShapes.Name = "cmbbShapes";
+            this.cmbbShapes.Size = new System.Drawing.Size(245, 24);
+            this.cmbbShapes.TabIndex = 43;
             // 
             // tbColor
             // 
@@ -707,16 +592,7 @@
         private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Button button16;
-        private System.Windows.Forms.Button button15;
-        private System.Windows.Forms.Button button14;
-        private System.Windows.Forms.Button button17;
-        private System.Windows.Forms.Button button18;
-        private System.Windows.Forms.Button button19;
         private System.Windows.Forms.CheckBox cbShift;
-        private System.Windows.Forms.Button button20;
-        private System.Windows.Forms.Button button21;
-        private System.Windows.Forms.Button button22;
         private System.Windows.Forms.Button buttonRETURN;
         private System.Windows.Forms.Button buttonUNDO;
         private System.Windows.Forms.Panel panel2;
@@ -734,6 +610,7 @@
         private System.Windows.Forms.TextBox tbX;
         private System.Windows.Forms.ListBox lbFigures;
         private System.Windows.Forms.Button btnChange;
+        private System.Windows.Forms.ComboBox cmbbShapes;
     }
 }
 

@@ -8,3 +8,12 @@ C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\obj\Debug\Smirno
 C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\obj\Debug\SmirnoffDraw.csproj.CoreCompileInputs.cache
 C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\obj\Debug\SmirnoffDraw.exe
 C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\obj\Debug\SmirnoffDraw.pdb
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\bin\Debug\IEditable.dll
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\bin\Debug\ISelectable.dll
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\bin\Debug\PluginInterface.dll
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\bin\Debug\ShapeLib.dll
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\bin\Debug\IEditable.pdb
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\bin\Debug\ISelectable.pdb
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\bin\Debug\PluginInterface.pdb
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\bin\Debug\ShapeLib.pdb
+C:\Users\User\Desktop\ООП\LabFirst\SmirnoffDraw\SmirnoffDraw\obj\Debug\SmirnoffDraw.csproj.CopyComplete

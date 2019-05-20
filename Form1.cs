@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Runtime.Serialization;
+using System.Reflection;
 
 namespace SmirnoffDraw
 {
@@ -20,20 +21,21 @@ namespace SmirnoffDraw
         List<Type> typeList = new List<Type>();
         Type[] arrList;
 
+        List<Shape> Factory = new List<Shape>();
+        private List<IPlugin> plugins = new List<IPlugin>();
+
         Shape shapeCurr;
+        Shape checkedShape;
+
         int currColor = Color.Red.ToArgb();
         int currPenWidth = 1;
-
-        Rectangle checkedRectangle;
-        Shape checkedShape;        
-
+        
         public PictureBox GetPictureBox()
         {
             return pictureBox1;
         }
 
-        public Bitmap pic { get; set; }        
-        string mode;
+        public Bitmap pic { get; set; }             
         int x1, y1;
         int xp, yp;
         int x2;
@@ -42,48 +44,31 @@ namespace SmirnoffDraw
         Pen checkedPen;
         bool shiftDown = (Control.ModifierKeys & Keys.Shift) == Keys.Shift;
         public Graphics g { get; set; }
-        
-        Pen p;
 
-        LineCreator LineC = new LineCreator();
-        RectCreator RectC = new RectCreator();
-        ElpCreator ElpC = new ElpCreator();
-        RhoCreator RhoC = new RhoCreator();
-        StarCreator StarC = new StarCreator();
-        TriCreator TriC = new TriCreator();
-        OctaCreator OctaC = new OctaCreator();
-        PenCreator PenC = new PenCreator();
+        Pen p;
+        bool isPluginsNull;
+
         public Form1()
         {
             InitializeComponent();
+            RefreshPlugins();
             this.KeyPreview = true;
-            mode = "Pen";
+            //mode = "Pen";
             pic = new Bitmap(pictureBox1.Width, pictureBox1.Height);            
             g = Graphics.FromImage(pic);            
 
             checkedPen = new Pen(Color.Red, 1);
-            checkedRectangle = new Rectangle();
+            //checkedRectangle = new Rectangle();
 
             p = new Pen(Color.Red);
             p.StartCap = System.Drawing.Drawing2D.LineCap.Round;
             p.EndCap = System.Drawing.Drawing2D.LineCap.Round;
 
-            shapeCurr = new Rect();
-            typeList.Add(shapeCurr.GetType());
-            shapeCurr = new Octavian();
-            typeList.Add(shapeCurr.GetType());
-            shapeCurr = new Rhombus();
-            typeList.Add(shapeCurr.GetType());
-            shapeCurr = new Star();
-            typeList.Add(shapeCurr.GetType());
-            shapeCurr = new Ellipse();
-            typeList.Add(shapeCurr.GetType());
-            shapeCurr = new Triangle();
-            typeList.Add(shapeCurr.GetType());
-            shapeCurr = new Line();
-            typeList.Add(shapeCurr.GetType());
-            shapeCurr = new Pencil();
-            typeList.Add(shapeCurr.GetType());
+            List<Type> types = new List<Type>();
+            foreach (Type t in typeof(Shape).Assembly.GetExportedTypes())
+            {
+                types.Add(t);
+            }
 
             arrList = typeList.ToArray<Type>();            
 
@@ -92,6 +77,57 @@ namespace SmirnoffDraw
             x = y = 0;
 
             RefreshFigureList();
+        }
+
+        //путь к папке с плагинами
+        private readonly string pluginPath = System.IO.Path.Combine(
+                                                        Directory.GetCurrentDirectory(),
+                                                        "Plugins");
+
+        private void RefreshPlugins()
+        {
+            isPluginsNull = true;
+            arrList = null;
+            typeList.Clear();
+            plugins.Clear();
+            cmbbShapes.Items.Clear();
+
+            DirectoryInfo pluginDirectory = new DirectoryInfo(pluginPath);
+            if (!pluginDirectory.Exists)
+                pluginDirectory.Create();
+
+            //берем из директории все файлы с расширением .dll      
+            var pluginFiles = Directory.GetFiles(pluginPath, "*.dll");
+            foreach (var file in pluginFiles)
+            {
+                //загружаем сборку
+                Assembly asm = Assembly.Load(File.ReadAllBytes(file));
+                //ищем типы, имплементирующие наш интерфейс IPlugin,
+                //чтобы не захватить лишнего
+                var types = asm.GetTypes().
+                                Where(t => t.GetInterfaces().
+                                Where(i => i.FullName == typeof(IPlugin).FullName).Any());
+
+                //заполняем экземплярами полученных типов коллекцию плагинов
+                foreach (var type in types)
+                {
+                    var plugin = asm.CreateInstance(type.FullName) as IPlugin;
+                    plugins.Add(plugin);
+                }
+            }
+
+            foreach (var plugin in plugins)
+            {
+                cmbbShapes.Items.Add(plugin.Load(this).GetType());
+                typeList.Add(plugin.Load(this).GetType());
+            }
+            arrList = typeList.ToArray<Type>();
+
+            if (plugins.Count > 0)
+            {
+                isPluginsNull = false;
+                cmbbShapes.SelectedItem = cmbbShapes.Items[0];
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -120,6 +156,7 @@ namespace SmirnoffDraw
                 return;
             string filename = openFileDialog1.FileName;
             string textFromFile;
+            shapeList.Clear();
             //Type type = shapeList.GetType();          
             DataContractJsonSerializer jsonFormatter = new DataContractJsonSerializer(typeof(List<Shape>), arrList);
             using (FileStream fs = new FileStream(filename, FileMode.OpenOrCreate))
@@ -134,30 +171,33 @@ namespace SmirnoffDraw
                 //ShapeList = (List<Shape>)jsonFormatter.ReadObject(fs);       
             }               
 
-            textFromFile.Remove(0, 1);
+            textFromFile.Remove(0, 1); 
 
-            while (textFromFile.Length > 0)
+            while (textFromFile.Length > 1)
             {
 
                 int startIndex = textFromFile.IndexOf("{\"__type\"");                
                 textFromFile = textFromFile.Remove(0, 9 + startIndex);
+                
                 int endIndex;
 
                 endIndex = textFromFile.IndexOf("{\"__type\"");                    
                     if (endIndex == -1)
                     {
-                        endIndex = textFromFile.IndexOf("]]}]");
-                        endIndex += 3;                        
+                        endIndex = textFromFile.IndexOf("]}]");
+                        endIndex += 1;                        
                     } else
                         endIndex -= 2;
-                
+
                 //MessageBox.Show(textFromFile + "\n" + Convert.ToString(startIndex) + "    " + Convert.ToString(endIndex) + "\n");
-                
-                string bufstr = "{\"__type\":" + textFromFile.Substring(startIndex, endIndex);                
-                textFromFile = textFromFile.Remove(0, endIndex+1);
+                         
+                string bufstr = "{\"__type\":" + textFromFile.Substring(startIndex, endIndex);
+                //MessageBox.Show(bufstr);
+                textFromFile = textFromFile.Remove(0, endIndex + 1);
                 startIndex = 0;
                 endIndex = -1;
-
+                
+                
                 string bufFile = "bufFile.json";
                 File.WriteAllText(bufFile, bufstr);
 
@@ -180,97 +220,52 @@ namespace SmirnoffDraw
             DrawShapes();
             RefreshFigureList();
         }
-
-        private void button14_Click(object sender, EventArgs e)
-        {
-            mode = "Pen";
-            button18.Image = Properties.Resources.pencil70x701;
-        }
-
-        private void button15_Click(object sender, EventArgs e)
-        {
-            mode = "Rectangle";
-            button18.Image = Properties.Resources.rectangle70x70;
-        }
-
-        private void button16_Click(object sender, EventArgs e)
-        {
-            mode = "Ellipse";
-            button18.Image = Properties.Resources.Ellipsefirst70x70;
-        }
+     
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
+            if (!isPluginsNull)
+            { 
             x2 = e.Location.X;
             y2 = e.Location.Y;
-
-            {
-                if (x2 < x1)
-                {
-                    shapeCurr.X1 = x2;
-                }
-
-                if (y2 < y1)
-                {
-                    shapeCurr.Y1 = y2;
-                }
-
-                shapeCurr.Width = Math.Abs(x2 - x1);
-                shapeCurr.Height = Math.Abs(y2 - y1);
-                shapeCurr.Color = currColor;
-                shapeCurr.PenWidth = currPenWidth;
-
-                if (cbShift.Checked)  //это надо для выделения, если не будет ифа, проблемы выделения с Shift
-                {
-                    if (shapeCurr.Width > shapeCurr.Height)
+              
+                    if (x2 < x1)
                     {
-                        shapeCurr.Width = shapeCurr.Height;
+                        shapeCurr.X1 = x2;
                     }
-                    else
+
+                    if (y2 < y1)
                     {
-                        shapeCurr.Height = shapeCurr.Width;
+                        shapeCurr.Y1 = y2;
                     }
-                }
 
-                DrawShapes();
-                shapeCurr.Draw(this, p);
+                    shapeCurr.Width = Math.Abs(x2 - x1);
+                    shapeCurr.Height = Math.Abs(y2 - y1);
+                    shapeCurr.Color = currColor;
+                    shapeCurr.PenWidth = currPenWidth;
 
-                shapeList.Add(shapeCurr);               
-                RefreshFigureList();
+                    if (cbShift.Checked)  //это надо для выделения, если не будет ифа, проблемы выделения с Shift
+                    {
+                        if (shapeCurr.Width > shapeCurr.Height)
+                        {
+                            shapeCurr.Width = shapeCurr.Height;
+                        }
+                        else
+                        {
+                            shapeCurr.Height = shapeCurr.Width;
+                        }
+                    }
+
+                    DrawShapes();
+                    shapeCurr.Draw(this, p, g);
+
+                    shapeList.Add(shapeCurr);
+                    RefreshFigureList();
+                
             }
 
         }
-
-        private void button19_Click(object sender, EventArgs e)
-        {
-            mode = "Romb";
-            button18.Image = Properties.Resources.rhombus64;
-        }
-
-        private void button17_Click(object sender, EventArgs e)
-        {
-            mode = "Line";
-            button18.Image = Properties.Resources.line70x70;
-        }
-
-        private void button20_Click(object sender, EventArgs e)
-        {
-            mode = "Triangle";
-            button18.Image = Properties.Resources.triangle64;
-        }
-
-        private void button21_Click(object sender, EventArgs e)
-        {
-            mode = "Star";
-            button18.Image = Properties.Resources.star64;
-        }
-
-        private void button22_Click(object sender, EventArgs e)
-        {
-            mode = "Octavian";
-            button18.Image = Properties.Resources.octagon64;
-        }
-
+       
         private void buttonUNDO_Click(object sender, EventArgs e)
         {
             try
@@ -297,48 +292,22 @@ namespace SmirnoffDraw
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-            shapeListBuf.Clear();
-            currColor = button4.BackColor.ToArgb();
-            p.Color = Color.FromArgb(currColor);
-            p.Width = trackBar1.Value;
-            currPenWidth = trackBar1.Value;
+            if (!isPluginsNull)
+            {
+                shapeListBuf.Clear();
+                currColor = button4.BackColor.ToArgb();
+                p.Color = Color.FromArgb(currColor);
+                p.Width = trackBar1.Value;
+                currPenWidth = trackBar1.Value;
 
-            x1 = e.X;
-            y1 = e.Y;
+                x1 = e.X;
+                y1 = e.Y;
 
-            if (mode == "Romb")
-            {
-                shapeCurr = RhoC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
-            }
-            else if (mode == "Rectangle")
-            {
-                shapeCurr = RectC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
-            }
-            else if (mode == "Ellipse")
-            {
-                shapeCurr = ElpC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
-            }
-            else if (mode == "Line")
-            {
-                shapeCurr = LineC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
-            }
-            else if (mode == "Pen")
-            {
-                shapeCurr = PenC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
-            }
-            else if (mode == "Triangle")
-            {
-                shapeCurr = TriC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
-            }
-            else if (mode == "Star")
-            {
-                shapeCurr = StarC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
-            }
-            else if (mode == "Octavian")
-            {
-                shapeCurr = OctaC.FactoryMethod(x1, y1, 0, 0, currColor, currPenWidth);
-            }
+                shapeCurr = plugins[cmbbShapes.SelectedIndex].Load(this);
 
+                shapeCurr.X1 = x1;
+                shapeCurr.Y1 = y1;
+            }
         }
 
         private void lbFigures_SelectedIndexChanged(object sender, EventArgs e)
@@ -412,10 +381,15 @@ namespace SmirnoffDraw
             checkedShape.Color = MyDialog.Color.ToArgb();
         }
 
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
 
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left && !isPluginsNull)
             {
                 x2 = e.Location.X;
                 y2 = e.Location.Y;
@@ -459,7 +433,7 @@ namespace SmirnoffDraw
                 }
                 
                 DrawShapes();
-                shapeCurr.Draw(this, p);               
+                shapeCurr.Draw(this, p, g);               
             }
         }
 
@@ -479,7 +453,7 @@ namespace SmirnoffDraw
             {
                 p.Color = Color.FromArgb(shape.Color);
                 p.Width = shape.PenWidth;
-                shape.Draw(this, p);
+                shape.Draw(this, p, g);
             }
             p.Width = currPenWidth;
             p.Color = Color.FromArgb(currColor);

@@ -33,6 +33,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="IEditable">
+      <HintPath>EditableIntf\IEditable\IEditable\bin\Debug\IEditable.dll</HintPath>
+    </Reference>
+    <Reference Include="ISelectable">
+      <HintPath>SelectableIntf\ISelectable\ISelectable\bin\Debug\ISelectable.dll</HintPath>
+    </Reference>
+    <Reference Include="PluginInterface">
+      <HintPath>PluginIntf\PluginInterface\PluginInterface\bin\Debug\PluginInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="ShapeLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libs\ShapeLib\ShapeLib\bin\Debug\ShapeLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -47,35 +60,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Creator.cs" />
-    <Compile Include="Ellipse.cs" />
-    <Compile Include="ElpCreator.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="IEditable.cs" />
-    <Compile Include="ISelectable.cs" />
-    <Compile Include="Line.cs" />
-    <Compile Include="LineCreator.cs" />
-    <Compile Include="OctaCreator.cs" />
-    <Compile Include="Octavian.cs" />
-    <Compile Include="Pencil.cs" />
-    <Compile Include="PenCreator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rect.cs" />
-    <Compile Include="RectCreator.cs" />
-    <Compile Include="RhoCreator.cs" />
-    <Compile Include="Rhombus.cs" />
     <Compile Include="SelectedShape.cs" />
-    <Compile Include="Shape.cs" />
-    <Compile Include="Star.cs" />
-    <Compile Include="StarCreator.cs" />
-    <Compile Include="Triangle.cs" />
-    <Compile Include="TriCreator.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
